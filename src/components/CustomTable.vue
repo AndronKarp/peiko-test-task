@@ -1,5 +1,5 @@
 <template>
-  <div class="table" :style="{ width }">
+  <div class="table">
     <div class="table__head">
       <div class="table__row">
         <div v-for="column in columns" :key="column" class="table__col">
@@ -28,10 +28,6 @@ import { capitalize } from "@/utils";
 export default {
   name: "CustomTable",
   props: {
-    width: {
-        type: String,
-        default: "100%"
-    },
     items: {
       type: Array,
       required: true

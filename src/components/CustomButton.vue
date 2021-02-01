@@ -1,23 +1,12 @@
 <template>
-  <button :style="{ margin }" @click="onClick">
+  <button @click="$emit('click', $event)">
     <slot />
   </button>
 </template>
 
 <script>
 export default {
-  name: "CustomButton",
-  props: {
-    margin: {
-      type: String,
-      default: "0"
-    }
-  },
-  methods: {
-    onClick(event) {
-      this.$emit("click", event);
-    }
-  }
+  name: "CustomButton"
 };
 </script>
 

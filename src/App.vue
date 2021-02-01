@@ -1,12 +1,14 @@
 <template>
   <div id="app">
-    <custom-button margin="0 0 20px" @click="getData" @click.once="onFirstClick">
+    <custom-button class="button" @click="getData" @click.once="onFirstClick">
       Get data
     </custom-button>
     <div v-if="isLoadedOnce">
       <span v-if="isLoading">Loading...</span>
       <span v-else-if="isError">No data</span>
-      <CustomTable width="400px" :items="items" v-else />
+      <div class="table-wrapper" v-else>
+        <CustomTable :items="items" />
+      </div>
     </div>
   </div>
 </template>
@@ -36,22 +38,26 @@ export default {
     };
   },
   methods: {
-    getData() {
+    async getData() {
       this.isError = false;
       this.isLoading = true;
-      getData(payload)
-        .then(this.processData)
-        .catch(() => (this.isError = true))
-        .finally(() => (this.isLoading = false));
+      try {
+        const data = await getData(payload);
+        this.processData(data);
+      } catch (e) {
+        this.isError = true;
+      } finally {
+        this.isLoading = false;
+      }
     },
     processData({ stocks, current, start }) {
-      this.items = Array(stocks.length)
-        .fill()
-        .map((item, index) => ({
-          stock: stocks[index],
-          current: roundToHundreths(current[index]),
-          change: calculateChange(current[index], start[index])
-        }));
+      for (let i = 0; i < stocks.length; i++) {
+        this.$set(this.items, i, {
+          stock: stocks[i],
+          current: roundToHundreths(current[i]),
+          change: calculateChange(current[i], start[i])
+        });
+      }
     },
     onFirstClick() {
       this.isLoadedOnce = true;
@@ -71,5 +77,13 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  .button {
+    margin-bottom: 20px;
+  }
+
+  .table-wrapper {
+    width: 400px;
+  }
 }
 </style>
